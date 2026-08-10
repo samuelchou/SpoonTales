@@ -1,0 +1,17 @@
+# 通用設定
+root = true
+[*]
+end_of_line = lf
+charset = utf-8
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 針對特定檔案規定使用 CRLF
+[*.{sln,csproj,bat}]
+end_of_line = crlf
+
+# 針對 Unity 資源檔使用 CRLF避免hash變化問題 
+[*.{unity,prefab,asset,meta}]
+end_of_line = crlf
