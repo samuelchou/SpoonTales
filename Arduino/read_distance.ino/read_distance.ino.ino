@@ -17,8 +17,10 @@ byte disResults[sensorNum + 1];
 // 分段線性內插函式
 int getDistanceMm(int rawAdc) {
   // 範圍檢查：超過邊界直接回傳極限值或錯誤碼
-  if (rawAdc >= adcTable[0]) return distTable[0];             // < 2cm (盲區)
-  if (rawAdc <= adcTable[NUM_POINTS - 1]) return 999;          // > 15cm (超出範圍)
+  // < 2cm (盲區)
+  if (rawAdc >= adcTable[0]) return distTable[0];             
+  // > 15cm (超出範圍)
+  if (rawAdc <= adcTable[NUM_POINTS - 1]) return distTable[NUM_POINTS - 1]; 
 
   // 尋找 rawAdc 落在哪個區間
   for (int i = 0; i < NUM_POINTS - 1; i++) {
