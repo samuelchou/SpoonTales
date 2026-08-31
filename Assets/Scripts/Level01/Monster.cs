@@ -6,6 +6,9 @@ public class Monster : MonoBehaviour
 {
     public SpoonColor Kind;
 
+    // 由 MonsterSpawner 依目前難度設定；1 = 基準速度，小於 1 代表移動更快
+    public float MoveIntervalMultiplier = 1f;
+
     [SerializeField] private float moveInterval = 1f / 3f; // 每秒 3 動：每次移動（左右或前進）都花這麼久
     [SerializeField] private float forwardStep = 3f;
     [SerializeField] private float killZoneZ = 1.5f;
@@ -42,11 +45,12 @@ public class Monster : MonoBehaviour
         Vector3 start = transform.position;
         Vector3 target = new Vector3(Lanes.X[laneIndex], start.y, start.z);
 
+        float duration = moveInterval * MoveIntervalMultiplier;
         float t = 0f;
-        while (t < moveInterval)
+        while (t < duration)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(start, target, t / moveInterval);
+            transform.position = Vector3.Lerp(start, target, t / duration);
             yield return null;
         }
         transform.position = target;
@@ -57,11 +61,12 @@ public class Monster : MonoBehaviour
         Vector3 start = transform.position;
         Vector3 target = start + new Vector3(0f, 0f, -forwardStep);
 
+        float duration = moveInterval * MoveIntervalMultiplier;
         float t = 0f;
-        while (t < moveInterval)
+        while (t < duration)
         {
             t += Time.deltaTime;
-            transform.position = Vector3.Lerp(start, target, t / moveInterval);
+            transform.position = Vector3.Lerp(start, target, t / duration);
             yield return null;
         }
         transform.position = target;

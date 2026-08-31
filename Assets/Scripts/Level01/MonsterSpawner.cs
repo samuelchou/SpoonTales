@@ -71,5 +71,6 @@ public class MonsterSpawner : MonoBehaviour
 
         Monster monster = go.AddComponent<Monster>();
         monster.Kind = kind;
+        monster.MoveIntervalMultiplier = RoundManager.Instance.MonsterMoveIntervalMultiplier;
     }
 }
