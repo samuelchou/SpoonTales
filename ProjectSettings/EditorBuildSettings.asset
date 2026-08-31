@@ -6,6 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: abe6500f7a94b49708e222046b7535b3
+  - enabled: 1
+    path: Assets/Scenes/Level01_MonsterShoot.unity
+    guid: ca76a5ce8eb744c06a8107dd495922df
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
