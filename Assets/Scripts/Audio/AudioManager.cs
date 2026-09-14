@@ -101,7 +101,7 @@ public class AudioManager : MonoBehaviour
     public void SetSoundVolume(float volume)
     {
         float db = volume <= 0.001f ? -80f : Mathf.Log10(volume) * 20f;
-        mainMixer.SetFloat("SFXVol", db);
+        mainMixer.SetFloat("SfxVol", db);
     }
 #endregion
 
