@@ -40,12 +40,18 @@ public class LaneShooter : MonoBehaviour
     private int _baudRate = 9600;
     [SerializeField]
     private int _thMm = 50;
+    private List<bool> _toggleSerials = new List<bool>();
 
     private void Start()
     {
         if (_isEnableSerial)
         {
             SerialConnector.Instance.Connect(_port, _baudRate);
+            _toggleSerials.Clear();
+            foreach(var _ in mappings)
+            {
+                _toggleSerials.Add(false);
+            }
         }
     }
 
@@ -77,9 +83,15 @@ public class LaneShooter : MonoBehaviour
                 var data = dataList[i];
                 var idx = System.Math.Min(i, mappings.Count - 1);
                 var (_, color, laneIndex) = mappings[idx];
-                if (data < _thMm)
+                if (data < _thMm && !_toggleSerials[idx])
                 {
                     Spawn(color, laneIndex);
+                    _toggleSerials[idx] = true;
+                    Debug.Log($"Serial Spawn: {color} at lane {laneIndex}");
+                }
+                else if (data >= _thMm && _toggleSerials[idx])
+                {
+                    _toggleSerials[idx] = false;
                 }
             }
         }
