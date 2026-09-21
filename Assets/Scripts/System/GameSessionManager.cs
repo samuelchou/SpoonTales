@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // 跨 Scene 保留「目前選擇的關卡 / 難度」。掛在 MainMenu 裡，DontDestroyOnLoad。
 // 如果直接開啟關卡 Scene 測試（沒有經過 MainMenu），Instance 會是 null，
@@ -26,6 +27,14 @@ public class GameSessionManager : MonoBehaviour
 
         if (SelectedLevel == null) SelectedLevel = defaultLevel;
         if (SelectedDifficulty == null) SelectedDifficulty = defaultDifficulty;
+    }
+
+    void Start()
+    {
+        if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+            AudioManager.Instance.PlayMusic("bgm_main");
+        }
     }
 
     public void SetLevel(LevelData level)
