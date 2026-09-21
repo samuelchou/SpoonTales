@@ -132,6 +132,8 @@ public class LaneShooter : MonoBehaviour
 
         Ball ball = go.AddComponent<Ball>();
         ball.Kind = color;
+
+        AudioManager.Instance?.PlaySfx("shoot_ball");
     }
 
     private static Color ColorFor(SpoonColor c)

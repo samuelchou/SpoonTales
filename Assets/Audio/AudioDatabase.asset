@@ -13,7 +13,15 @@ MonoBehaviour:
   m_Name: AudioDatabase
   m_EditorClassIdentifier: Assembly-CSharp::AudioDatabase
   defaultSfxCooldown: 0.05
-  sfxList: []
+  sfxList:
+  - id: hit_monster
+    clip: {fileID: 8300000, guid: 5dac3721758119642904e84b14918823, type: 3}
+    cooldownOverride: 0
+    volumeScale: 0.5
+  - id: shoot_ball
+    clip: {fileID: 8300000, guid: 838025f0b131445478f7e0d5cc881d4e, type: 3}
+    cooldownOverride: 0
+    volumeScale: 0.5
   bgmList:
   - id: bgm_main
     clip: {fileID: 8300000, guid: ace79a019fa6b1747be0c4396ad866d7, type: 3}

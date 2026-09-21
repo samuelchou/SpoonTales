@@ -85,6 +85,7 @@ public class Monster : MonoBehaviour
             RoundManager.Instance.AddScore(scoreValue);
         }
 
+        AudioManager.Instance?.PlaySfx("hit_monster");
         Destroy(ball.gameObject);
         StopAllCoroutines();
         Destroy(gameObject);
