@@ -549,7 +549,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 64
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -1305,9 +1305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab896ba2936514db383cfb616d586e0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
-  blackSprite: {fileID: 21300000, guid: 482fe3a9dcd9042328e7e2eec2aa0581, type: 3}
-  blueSprite: {fileID: 21300000, guid: 7574b1d110c3748c9a6b88716d291300, type: 3}
-  whiteSprite: {fileID: 21300000, guid: cc411c8da6e9b40829cdf6cdad1f93ca, type: 3}
+  blackMonsterPrefab: {fileID: 5437088454284537945, guid: 5158ad497a35541f283b76bad7d817f4, type: 3}
+  blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
+  whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
   sideSpawnX: 20
   sideSpawnZ: 14
   farSpawnZ: 30
@@ -2225,7 +2225,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 56
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
