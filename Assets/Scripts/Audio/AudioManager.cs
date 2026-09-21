@@ -22,6 +22,8 @@ public class AudioManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioSource sfxSource;
 
+    public AudioClip testClip;
+
     public float MasterVolume { get; private set; }
     public float MusicVolume  { get; private set; }
     public float SoundVolume  { get; private set; }
@@ -53,6 +55,7 @@ public class AudioManager : MonoBehaviour
     {
         // 不可以放 Awake()有可能 mixer 無法接受參數而用預設值
         LoadVolume();
+        PlayMusicInternal(testClip);
     }
 
     private void InitAudioDict()
@@ -79,6 +82,11 @@ public class AudioManager : MonoBehaviour
         /*MasterVolume = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_MASTER_VOLUME, GameConstants.DEFAULT_MASTER_VOLUME);
         MusicVolume  = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_MUSIC_VOLUME,  GameConstants.DEFAULT_MUSIC_VOLUME);
         SoundVolume  = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_SOUND_VOLUME,  GameConstants.DEFAULT_SOUND_VOLUME);*/
+
+        // TODO: 之後改回讀 PlayerPrefs
+        MasterVolume = 1f;
+        MusicVolume  = 1f;
+        SoundVolume  = 1f;
 
         SetMasterVolume(MasterVolume);
         SetMusicVolume(MusicVolume);

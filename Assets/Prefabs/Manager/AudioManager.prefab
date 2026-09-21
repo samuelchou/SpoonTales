@@ -51,6 +51,7 @@ MonoBehaviour:
   sfxGroup: {fileID: 879511913487280951, guid: a3ab1c7e787f84b459147148c42457fd, type: 2}
   musicSource: {fileID: 242854128744859968}
   sfxSource: {fileID: 2428872594169658831}
+  testClip: {fileID: 8300000, guid: ace79a019fa6b1747be0c4396ad866d7, type: 3}
 --- !u!1 &6391594766267517345
 GameObject:
   m_ObjectHideFlags: 0
