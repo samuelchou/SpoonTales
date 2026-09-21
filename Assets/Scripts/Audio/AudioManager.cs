@@ -10,8 +10,8 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    //[Header("Audio Database")]
-    //public AudioDatabase audioDatabase;
+    [Header("Audio Database")]
+    public AudioDatabase audioDatabase;
 
     [Header("Mixer Settings")]
     public AudioMixer mainMixer;
@@ -21,8 +21,6 @@ public class AudioManager : MonoBehaviour
     [Header("Sources")]
     public AudioSource musicSource;
     public AudioSource sfxSource;
-
-    public AudioClip testClip;
 
     public float MasterVolume { get; private set; }
     public float MusicVolume  { get; private set; }
@@ -55,12 +53,11 @@ public class AudioManager : MonoBehaviour
     {
         // 不可以放 Awake()有可能 mixer 無法接受參數而用預設值
         LoadVolume();
-        PlayMusicInternal(testClip);
     }
 
     private void InitAudioDict()
     {
-        /*if (audioDatabase == null)
+        if (audioDatabase == null)
         {
             Debug.LogError("[AudioManager] audioDatabase is not assigned!");
             return;
@@ -74,7 +71,7 @@ public class AudioManager : MonoBehaviour
         foreach (var kv in audioDatabase.BuildBgmDict())
             _bgmDict.Add(kv.Key, kv.Value);
 
-        Debug.Log($"[AudioManager] Initialized with {_sfxDict.Count} Sfx / {_bgmDict.Count} Bgm entries from \"{audioDatabase.name}\".");*/
+        Debug.Log($"[AudioManager] Initialized with {_sfxDict.Count} Sfx / {_bgmDict.Count} Bgm entries from \"{audioDatabase.name}\".");
     }
 
     private void LoadVolume()
@@ -184,7 +181,6 @@ public class AudioManager : MonoBehaviour
 #endregion
 
 #region API - Sfx
-
     public void PlaySfx(string id)
     {
         if (sfxSource == null || string.IsNullOrWhiteSpace(id)) return;
@@ -196,7 +192,6 @@ public class AudioManager : MonoBehaviour
         }
 
         // 檢查冷卻時間
-        // [Bug Fix] 改用 unscaledTime: 暫停時 timeScale = 0 會讓 Time.time 停住, 導致冷卻永遠不會過期, 暫停選單的 UI 音效只會響第一聲
         if (_sfxNextPlayTime.TryGetValue(id, out float nextTime) && Time.unscaledTime < nextTime)
             return;
 
@@ -204,11 +199,11 @@ public class AudioManager : MonoBehaviour
         PlaySfx(entry.clip, entry.ResolvedVolumeScale);
 
         // 更新下次可播放時間
-        /*float cooldown = entry.cooldownOverride > 0f
+        float cooldown = entry.cooldownOverride > 0f
             ? entry.cooldownOverride
             : audioDatabase.defaultSfxCooldown;
 
-        _sfxNextPlayTime[id] = Time.unscaledTime + cooldown;*/
+        _sfxNextPlayTime[id] = Time.unscaledTime + cooldown;
     }
 
     public void PlaySfx(string id, float delay)
@@ -235,31 +230,4 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, Mathf.Clamp01(volumeScale));
     }
 #endregion
-}
-
-/// <summary>音效條目</summary>
-[Serializable]
-public class SfxDef
-{
-    public string id;
-    public AudioClip clip;
-
-    [Tooltip("獨立覆寫冷卻時間, 小於等於0則使用全域預設值")]
-    public float cooldownOverride;
-
-    [Tooltip("音量係數, 疊在 AudioSource 音量與 Sfx mixer group 之上, 只能衰減")]
-    [Range(0f, 1f)] public float volumeScale = 1f;
-
-    // 防呆: 取得實際使用的音量
-    public float ResolvedVolumeScale => volumeScale <= 0f ? 1f : volumeScale;
-}
-
-/// <summary>Bgm 條目</summary>
-[Serializable]
-public class BgmDef
-{
-    public string id;
-    public AudioClip clip;
-    public string nameLocId;
-    public bool loop = true;
 }
