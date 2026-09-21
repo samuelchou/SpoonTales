@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    [SerializeField] private Sprite blackSprite;
-    [SerializeField] private Sprite blueSprite;
-    [SerializeField] private Sprite whiteSprite;
+    [SerializeField] private GameObject blackMonsterPrefab;
+    [SerializeField] private GameObject blueMonsterPrefab;
+    [SerializeField] private GameObject whiteMonsterPrefab;
 
     [SerializeField] private float sideSpawnX = 20f;
     [SerializeField] private float sideSpawnZ = 14f;
@@ -47,30 +47,19 @@ public class MonsterSpawner : MonoBehaviour
         }
 
         SpoonColor kind = (SpoonColor)Random.Range(0, 3);
-        Sprite sprite = kind switch
+        GameObject prefab = kind switch
         {
-            SpoonColor.Black => blackSprite,
-            SpoonColor.Blue => blueSprite,
-            _ => whiteSprite
+            SpoonColor.Black => blackMonsterPrefab,
+            SpoonColor.Blue => blueMonsterPrefab,
+            _ => whiteMonsterPrefab
         };
 
-        GameObject go = new GameObject("Monster_" + kind);
-        go.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
+        // 顏色（Kind）與外觀已經烘進各自的 prefab 裡，這裡只需要生成、擺位置、套用目前難度速度倍率。
+        GameObject go = Object.Instantiate(prefab, spawnPos, Quaternion.identity);
+        go.name = "Monster_" + kind;
         go.transform.localScale = Vector3.one * monsterScale;
 
-        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = sprite;
-
-        SphereCollider col = go.AddComponent<SphereCollider>();
-        col.isTrigger = true;
-        col.radius = 0.5f;
-
-        Rigidbody rb = go.AddComponent<Rigidbody>();
-        rb.isKinematic = true;
-        rb.useGravity = false;
-
-        Monster monster = go.AddComponent<Monster>();
-        monster.Kind = kind;
+        Monster monster = go.GetComponent<Monster>();
         monster.MoveIntervalMultiplier = RoundManager.Instance.MonsterMoveIntervalMultiplier;
     }
 }
