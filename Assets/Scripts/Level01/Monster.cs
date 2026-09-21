@@ -36,6 +36,12 @@ public class Monster : MonoBehaviour
             yield return StartCoroutine(StepForward());
         }
 
+        // 漏接：怪物一路走到玩家面前都沒被消滅，扣一條命。
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.LoseLife();
+        }
+
         Destroy(gameObject);
     }
 
