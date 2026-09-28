@@ -16,4 +16,5 @@ MonoBehaviour:
   roundDuration: 60
   spawnRateMultiplier: 0.7
   scoreMultiplier: 0.8
+  maxLives: 5
   monsterMoveIntervalMultiplier: 1.3

@@ -15,6 +15,7 @@ public class RoundManager : MonoBehaviour
 
     [SerializeField] private Text scoreText;
     [SerializeField] private Text timerText;
+    [SerializeField] private Text livesText;
     [SerializeField] private Text statusText;
     [SerializeField] private GameOverUI gameOverUI;
 
@@ -26,6 +27,7 @@ public class RoundManager : MonoBehaviour
     private float roundDuration = 60f;
     private float spawnRateMultiplier = 1f;
     private float scoreMultiplier = 1f;
+    private int maxLives = 3;
 
     private float elapsed;
     private float stateTimer;
@@ -34,6 +36,7 @@ public class RoundManager : MonoBehaviour
     public GameState State { get; private set; } = GameState.Ready;
     public bool RoundActive => State == GameState.Playing;
     public int Score { get; private set; }
+    public int CurrentLives { get; private set; }
     public float MonsterMoveIntervalMultiplier { get; private set; } = 1f;
 
     // 0-20s: 1/s, 20-30s: 2/s, 30-40s: 3/s, 40-50s: 4/s, 50-60s: 5/s，再乘上難度倍率
@@ -60,6 +63,7 @@ public class RoundManager : MonoBehaviour
     {
         ApplyDifficulty();
         Score = 0;
+        CurrentLives = maxLives;
         elapsed = 0f;
         UpdateUI();
         EnterReady();
@@ -74,6 +78,7 @@ public class RoundManager : MonoBehaviour
         spawnRateMultiplier = diff.spawnRateMultiplier;
         scoreMultiplier = diff.scoreMultiplier;
         MonsterMoveIntervalMultiplier = diff.monsterMoveIntervalMultiplier;
+        maxLives = diff.maxLives;
     }
 
     private void Update()
@@ -114,7 +119,7 @@ public class RoundManager : MonoBehaviour
                 if (elapsed >= roundDuration)
                 {
                     elapsed = roundDuration;
-                    EnterGameOver();
+                    EnterGameOver(challengeFailed: false);
                 }
                 UpdateUI();
                 break;
@@ -145,11 +150,11 @@ public class RoundManager : MonoBehaviour
         if (statusText != null) statusText.text = "";
     }
 
-    private void EnterGameOver()
+    private void EnterGameOver(bool challengeFailed)
     {
         State = GameState.GameOver;
         if (statusText != null) statusText.text = "";
-        if (gameOverUI != null) gameOverUI.Show(Score);
+        if (gameOverUI != null) gameOverUI.Show(Score, challengeFailed);
     }
 
     public void AddScore(int amount)
@@ -158,9 +163,24 @@ public class RoundManager : MonoBehaviour
         UpdateUI();
     }
 
+    // 怪物漏接（走到 kill zone 還沒被消滅）呼叫這個扣一條命；歸零就提前結束、視為挑戰失敗。
+    public void LoseLife()
+    {
+        if (State != GameState.Playing) return;
+
+        CurrentLives = Mathf.Max(0, CurrentLives - 1);
+        UpdateUI();
+
+        if (CurrentLives <= 0)
+        {
+            EnterGameOver(challengeFailed: true);
+        }
+    }
+
     private void UpdateUI()
     {
         if (scoreText != null) scoreText.text = $"分數 Score: {Score}";
         if (timerText != null) timerText.text = $"時間 Time: {Mathf.CeilToInt(roundDuration - elapsed)}";
+        if (livesText != null) livesText.text = $"生命 Lives: {CurrentLives}";
     }
 }
