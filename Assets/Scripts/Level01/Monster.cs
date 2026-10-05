@@ -14,6 +14,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private float killZoneZ = 1.5f;
     [SerializeField] private int scoreValue = 10;
 
+    private int currentLane;
     private bool hasEntry;
     private Vector3 entryTarget;
     private float entryDuration;
@@ -53,6 +54,8 @@ public class Monster : MonoBehaviour
             yield return StartCoroutine(EntryRoutine());
         }
 
+        currentLane = NearestLane(transform.position.x);
+
         while (transform.position.z > killZoneZ)
         {
             for (int i = 0; i < 4 && transform.position.z > killZoneZ; i++)
@@ -77,11 +80,33 @@ public class Monster : MonoBehaviour
         Destroy(gameObject);
     }
 
+    // 左右走位每次只移動「相鄰的一條賽道」（左 1 或右 1），這樣每次位移距離一樣、速度均勻，
+    // 不會出現 1 -> 4 這種跨多條賽道的瞬移。在最左／最右賽道時只能往內側移動。
+    public static int PickAdjacentLane(int currentLane, int laneCount)
+    {
+        if (currentLane <= 0) return 1;
+        if (currentLane >= laneCount - 1) return laneCount - 2;
+        return Random.value < 0.5f ? currentLane - 1 : currentLane + 1;
+    }
+
+    private static int NearestLane(float x)
+    {
+        int nearest = 0;
+        for (int i = 1; i < Lanes.X.Length; i++)
+        {
+            if (Mathf.Abs(Lanes.X[i] - x) < Mathf.Abs(Lanes.X[nearest] - x))
+            {
+                nearest = i;
+            }
+        }
+        return nearest;
+    }
+
     private IEnumerator ShuffleOnce()
     {
-        int laneIndex = Random.Range(0, Lanes.X.Length);
+        currentLane = PickAdjacentLane(currentLane, Lanes.X.Length);
         Vector3 start = transform.position;
-        Vector3 target = new Vector3(Lanes.X[laneIndex], start.y, start.z);
+        Vector3 target = new Vector3(Lanes.X[currentLane], start.y, start.z);
 
         float duration = moveInterval * MoveIntervalMultiplier;
         float t = 0f;
