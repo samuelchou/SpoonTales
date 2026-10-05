@@ -9,7 +9,7 @@ public class Monster : MonoBehaviour
     // 由 MonsterSpawner 依目前難度設定；1 = 基準速度，小於 1 代表移動更快
     public float MoveIntervalMultiplier = 1f;
 
-    [SerializeField] private float moveInterval = 1f / 3f; // 每秒 3 動：每次移動（左右或前進）都花這麼久
+    [SerializeField] private float moveInterval = 1f; // 每秒 1 動：每次移動（左右或前進）都花這麼久
     [SerializeField] private float forwardStep = 3f;
     [SerializeField] private float killZoneZ = 1.5f;
     [SerializeField] private int scoreValue = 10;
