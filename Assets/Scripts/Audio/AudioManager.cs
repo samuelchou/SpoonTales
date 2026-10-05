@@ -74,39 +74,49 @@ public class AudioManager : MonoBehaviour
         Debug.Log($"[AudioManager] Initialized with {_sfxDict.Count} Sfx / {_bgmDict.Count} Bgm entries from \"{audioDatabase.name}\".");
     }
 
+    private const string PrefsKeyMasterVolume = "audio.master_volume";
+    private const string PrefsKeyMusicVolume  = "audio.music_volume";
+    private const string PrefsKeySoundVolume  = "audio.sound_volume";
+
     private void LoadVolume()
     {
-        /*MasterVolume = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_MASTER_VOLUME, GameConstants.DEFAULT_MASTER_VOLUME);
-        MusicVolume  = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_MUSIC_VOLUME,  GameConstants.DEFAULT_MUSIC_VOLUME);
-        SoundVolume  = PlayerPrefs.GetFloat(GameConstants.PREFS_KEY_SOUND_VOLUME,  GameConstants.DEFAULT_SOUND_VOLUME);*/
+        // 音量為 0~1，UI 以 0~100 顯示；存在 PlayerPrefs，重開遊戲後仍保留
+        SetMasterVolume(PlayerPrefs.GetFloat(PrefsKeyMasterVolume, 1f));
+        SetMusicVolume(PlayerPrefs.GetFloat(PrefsKeyMusicVolume, 1f));
+        SetSoundVolume(PlayerPrefs.GetFloat(PrefsKeySoundVolume, 1f));
+    }
 
-        // TODO: 之後改回讀 PlayerPrefs
-        MasterVolume = 1f;
-        MusicVolume  = 1f;
-        SoundVolume  = 1f;
-
-        SetMasterVolume(MasterVolume);
-        SetMusicVolume(MusicVolume);
-        SetSoundVolume(SoundVolume);
+    /// <summary>把目前音量寫入磁碟。拖曳 Slider 時只更新記憶體，放開/離開選單時再呼叫。</summary>
+    public void SaveVolume()
+    {
+        PlayerPrefs.SetFloat(PrefsKeyMasterVolume, MasterVolume);
+        PlayerPrefs.SetFloat(PrefsKeyMusicVolume, MusicVolume);
+        PlayerPrefs.SetFloat(PrefsKeySoundVolume, SoundVolume);
+        PlayerPrefs.Save();
     }
 
 #region API - Volume
     public void SetMasterVolume(float volume)
     {
-        float db = volume <= 0.001f ? -80f : Mathf.Log10(volume) * 20f;
-        mainMixer.SetFloat("MasterVol", db);
+        MasterVolume = Mathf.Clamp01(volume);
+        mainMixer.SetFloat("MasterVol", ToDecibel(MasterVolume));
     }
 
     public void SetMusicVolume(float volume)
     {
-        float db = volume <= 0.001f ? -80f : Mathf.Log10(volume) * 20f;
-        mainMixer.SetFloat("MusicVol", db);
+        MusicVolume = Mathf.Clamp01(volume);
+        mainMixer.SetFloat("MusicVol", ToDecibel(MusicVolume));
     }
 
     public void SetSoundVolume(float volume)
     {
-        float db = volume <= 0.001f ? -80f : Mathf.Log10(volume) * 20f;
-        mainMixer.SetFloat("SfxVol", db);
+        SoundVolume = Mathf.Clamp01(volume);
+        mainMixer.SetFloat("SfxVol", ToDecibel(SoundVolume));
+    }
+
+    private static float ToDecibel(float volume)
+    {
+        return volume <= 0.001f ? -80f : Mathf.Log10(volume) * 20f;
     }
 #endregion
 
