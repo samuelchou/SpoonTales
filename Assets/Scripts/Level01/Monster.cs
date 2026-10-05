@@ -14,13 +14,45 @@ public class Monster : MonoBehaviour
     [SerializeField] private float killZoneZ = 1.5f;
     [SerializeField] private int scoreValue = 10;
 
+    private bool hasEntry;
+    private Vector3 entryTarget;
+    private float entryDuration;
+
+    // 由 MonsterSpawner 在生成後呼叫：怪物先直接移動到 target（入場位置，通常是某條賽道上），
+    // 完成後才開始正常的「左右移動 4 次 → 前進 1 次」循環。
+    // duration 是入場花費的秒數（已含難度速度倍率，由呼叫端算好）。
+    public void SetEntry(Vector3 target, float duration)
+    {
+        hasEntry = true;
+        entryTarget = target;
+        entryDuration = duration;
+    }
+
     private void Start()
     {
         StartCoroutine(MoveRoutine());
     }
 
+    private IEnumerator EntryRoutine()
+    {
+        Vector3 start = transform.position;
+        float t = 0f;
+        while (t < entryDuration)
+        {
+            t += Time.deltaTime;
+            transform.position = Vector3.Lerp(start, entryTarget, t / entryDuration);
+            yield return null;
+        }
+        transform.position = entryTarget;
+    }
+
     private IEnumerator MoveRoutine()
     {
+        if (hasEntry)
+        {
+            yield return StartCoroutine(EntryRoutine());
+        }
+
         while (transform.position.z > killZoneZ)
         {
             for (int i = 0; i < 4 && transform.position.z > killZoneZ; i++)

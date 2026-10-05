@@ -1393,10 +1393,12 @@ MonoBehaviour:
   blackMonsterPrefab: {fileID: 5437088454284537945, guid: 5158ad497a35541f283b76bad7d817f4, type: 3}
   blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
   whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
-  sideSpawnX: 20
+  sideSpawnX: 23
   sideSpawnZ: 14
   farSpawnZ: 30
   monsterScale: 2
+  sideEntryDuration: 0.5
+  farEntryDuration: 0.8
 --- !u!4 &1068411601
 Transform:
   m_ObjectHideFlags: 0
