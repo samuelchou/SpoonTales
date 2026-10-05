@@ -157,7 +157,6 @@ public class RoundManager : MonoBehaviour
     {
         if (IsPaused || State == GameState.GameOver) return;
         IsPaused = true;
-        Debug.Log("[RoundManager] Paused");
         Time.timeScale = 0f;
         if (pauseMenuUI != null) pauseMenuUI.Show();
     }
