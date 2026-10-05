@@ -5,7 +5,7 @@ public class Ball : MonoBehaviour
 {
     public SpoonColor Kind;
 
-    [SerializeField] private float speed = 14f;
+    [SerializeField] private float speed = 10f;
     [SerializeField] private float lifetime = 3f;
 
     private void Start()

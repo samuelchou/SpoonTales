@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public enum GameState
@@ -18,6 +19,7 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private Text livesText;
     [SerializeField] private Text statusText;
     [SerializeField] private GameOverUI gameOverUI;
+    [SerializeField] private PauseMenuUI pauseMenuUI;
 
     [Header("Ready / Countdown 節奏")]
     [SerializeField] private float readyDuration = 1.2f;
@@ -34,7 +36,8 @@ public class RoundManager : MonoBehaviour
     private int countdownStep;
 
     public GameState State { get; private set; } = GameState.Ready;
-    public bool RoundActive => State == GameState.Playing;
+    public bool IsPaused { get; private set; }
+    public bool RoundActive => State == GameState.Playing && !IsPaused;
     public int Score { get; private set; }
     public int CurrentLives { get; private set; }
     public float MonsterMoveIntervalMultiplier { get; private set; } = 1f;
@@ -59,8 +62,20 @@ public class RoundManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnDestroy()
+    {
+        // 暫停中直接切換 Scene 時，確保時間流速被還原
+        if (Instance == this) Instance = null;
+        Time.timeScale = 1f;
+    }
+
     private void Start()
     {
+        Time.timeScale = 1f;
+        if (pauseMenuUI == null)
+        {
+            pauseMenuUI = new GameObject("PauseMenu").AddComponent<PauseMenuUI>();
+        }
         ApplyDifficulty();
         Score = 0;
         CurrentLives = maxLives;
@@ -83,6 +98,14 @@ public class RoundManager : MonoBehaviour
 
     private void Update()
     {
+        if (State != GameState.GameOver && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            if (IsPaused) Resume();
+            else Pause();
+        }
+
+        if (IsPaused) return;
+
         switch (State)
         {
             case GameState.Ready:
@@ -127,6 +150,29 @@ public class RoundManager : MonoBehaviour
             case GameState.GameOver:
                 break;
         }
+    }
+
+    // 以 Time.timeScale = 0 凍結整個遊戲（怪物、球、計時、生成器都吃 deltaTime）。
+    public void Pause()
+    {
+        if (IsPaused || State == GameState.GameOver) return;
+        IsPaused = true;
+        Time.timeScale = 0f;
+        if (pauseMenuUI != null) pauseMenuUI.Show();
+    }
+
+    public void Resume()
+    {
+        if (!IsPaused) return;
+        IsPaused = false;
+        Time.timeScale = 1f;
+        if (pauseMenuUI != null) pauseMenuUI.Hide();
+    }
+
+    public void QuitToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneLoader.Load("MainMenu");
     }
 
     private void EnterReady()

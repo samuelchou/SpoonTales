@@ -24,8 +24,12 @@ public class LaneShooter : MonoBehaviour
         (Key.V, SpoonColor.White, 3),
     };
     [Header("General")]
+    [Tooltip("找不到 Main Camera 時的備援生成 Z；正常情況由攝影機視錐動態計算")]
     [SerializeField]
     private float _spawnZ = 1f;
+    [Tooltip("球生成在畫面下緣之外多遠（viewport 單位，0.15 = 螢幕高度的 15%）")]
+    [SerializeField]
+    private float _offscreenMargin = 0.15f;
     [SerializeField]
     private float _ballScale = 0.35f;
     [Header("Keyboard")]
@@ -113,9 +117,23 @@ public class LaneShooter : MonoBehaviour
         }
     }
 
+    // 沿著畫面下緣外側（_offscreenMargin）的視線，找出與球飛行高度（Lanes.Y）相交的 Z，
+    // 球從那裡生成就一定在畫面外，再直線飛進畫面。
+    private float ComputeOffscreenSpawnZ()
+    {
+        Camera cam = Camera.main;
+        if (cam == null) return _spawnZ;
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, -_offscreenMargin, 0f));
+        if (Mathf.Abs(ray.direction.y) < 1e-4f) return _spawnZ;
+
+        float t = (Lanes.Y - ray.origin.y) / ray.direction.y;
+        return t > 0f ? ray.GetPoint(t).z : _spawnZ;
+    }
+
     private void Spawn(SpoonColor color, int laneIndex)
     {
-        Vector3 pos = new Vector3(Lanes.X[laneIndex], Lanes.Y, _spawnZ);
+        Vector3 pos = new Vector3(Lanes.X[laneIndex], Lanes.Y, ComputeOffscreenSpawnZ());
 
         GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         go.name = "Ball_" + color;
