@@ -157,7 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Monster
   Kind: 1
   MoveIntervalMultiplier: 1
-  moveInterval: 0.33333334
+  moveInterval: 1
   forwardStep: 3
   killZoneZ: 1.5
   scoreValue: 10
