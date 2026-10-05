@@ -29,10 +29,10 @@ namespace SerialSystem
 
             if (SerialConnector.Instance.TryGetData(out var datas))
             {
-                if (datas.Count > _nowDisplays.Count)
+                while (datas.Count > _nowDisplays.Count)
                 {
                     var newDisplayer = GameObject.Instantiate(_displayerPrefab, _root);
-                    newDisplayer.name = $"Sensor {datas.Count + 1}";
+                    newDisplayer.NameText.text = $"Sensor {_nowDisplays.Count}";
                     _nowDisplays.Add(newDisplayer);
                 }
                 for (int i = 0; i < datas.Count; i++)

@@ -1,4 +1,4 @@
-const int sensorNum = 1;
+const int sensorNum = 4;
 const int sensorPin = A0;
 const bool isDebug = false;
 // 10 times per seconds
