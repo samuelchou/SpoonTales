@@ -1,8 +1,8 @@
-const int sensorNum = 4;
+const int sensorNum = 1;
 const int sensorPin = A0;
 const bool isDebug = false;
-// 10 times per seconds
-const int interval = 100;
+// 30 times per seconds
+const int interval = 33;
 
 // 定義查表點位
 // 數據點越多越精準，此處用 4 個點
