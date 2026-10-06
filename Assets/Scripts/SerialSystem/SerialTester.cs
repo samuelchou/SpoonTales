@@ -6,8 +6,6 @@ namespace SerialSystem
     public class SerialTester : MonoBehaviour
     {
         [SerializeField]
-        private string _portName = "COM1";
-        [SerializeField]
         private int _baudRate = 9600;
         [SerializeField]
         private RectTransform _root;
@@ -17,7 +15,8 @@ namespace SerialSystem
 
         private void Start()
         {
-            SerialConnector.Instance.Connect(_portName, _baudRate);
+            SerialConnector.Instance.LogAvailablePorts();
+            SerialConnector.Instance.AutoConnectArduinoNano(_baudRate);
         }
 
         private void Update()
