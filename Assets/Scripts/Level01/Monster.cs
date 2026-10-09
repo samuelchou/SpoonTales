@@ -22,6 +22,10 @@ public class Monster : MonoBehaviour
     [Tooltip("要翻轉的 SpriteRenderer；留空會自動在自己或子物件中尋找")]
     [SerializeField] private SpriteRenderer spriteRenderer;
 
+    [Header("死亡動畫")]
+    [Tooltip("被擊中時切換成這個 Animator Controller 播放死亡動畫，播完才銷毀；留空則立即銷毀")]
+    [SerializeField] private RuntimeAnimatorController dieController;
+
     [SerializeField] private float moveInterval = 1f; // 每秒 1 動：每次移動（左右或前進）都花這麼久
     [SerializeField] private float forwardStep = 3f;
     [SerializeField] private float killZoneZ = 1.5f;
@@ -31,6 +35,7 @@ public class Monster : MonoBehaviour
     private bool hasEntry;
     private Vector3 entryTarget;
     private float entryDuration;
+    private bool isDead;
 
     // 由 MonsterSpawner 在生成後呼叫：怪物先直接移動到 target（入場位置，通常是某條賽道上），
     // 完成後才開始正常的「左右移動 4 次 → 前進 1 次」循環。
@@ -166,6 +171,11 @@ public class Monster : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (isDead)
+        {
+            return;
+        }
+
         Ball ball = other.GetComponent<Ball>();
         if (ball == null || ball.Kind != Kind)
         {
@@ -179,8 +189,34 @@ public class Monster : MonoBehaviour
 
         AudioManager.Instance?.PlaySfx(hitSfxName);
         Destroy(ball.gameObject);
+        Die();
+    }
+
+    private void Die()
+    {
+        isDead = true;
         StopAllCoroutines();
-        Destroy(gameObject);
+
+        Animator animator = GetComponentInChildren<Animator>();
+        if (dieController == null || animator == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // 停止碰撞，避免死亡動畫播放期間再被球擊中
+        foreach (Collider c in GetComponents<Collider>())
+        {
+            c.enabled = false;
+        }
+
+        animator.runtimeAnimatorController = dieController;
+        float length = 0f;
+        foreach (AnimationClip clip in dieController.animationClips)
+        {
+            length = Mathf.Max(length, clip.length);
+        }
+        Destroy(gameObject, length);
     }
 
     private void FaceDirection(float dx)

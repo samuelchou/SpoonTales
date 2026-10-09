@@ -102,6 +102,7 @@ MonoBehaviour:
   hitSfxName: hit_monster
   artFacesRight: 1
   spriteRenderer: {fileID: 0}
+  dieController: {fileID: 9100000, guid: d81736ea04d1bd548aabc53d058e69bb, type: 2}
   moveInterval: 1
   forwardStep: 2
   killZoneZ: 1.5
