@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Level01_MonsterShoot.unity
     guid: ca76a5ce8eb744c06a8107dd495922df
   - enabled: 1
+    path: Assets/Scenes/Level00_BlackOnly.unity
+    guid: d1d0f427da5f4a95ac913f12b13124ea
+  - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:
