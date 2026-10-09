@@ -1418,6 +1418,7 @@ MonoBehaviour:
   livesText: {fileID: 86109878}
   statusText: {fileID: 1569801407}
   gameOverUI: {fileID: 795259922}
+  invincible: 1
   readyDuration: 1.2
   countdownStepDuration: 0.8
 --- !u!4 &1133419284
