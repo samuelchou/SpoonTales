@@ -21,6 +21,10 @@ public class RoundManager : MonoBehaviour
     [SerializeField] private GameOverUI gameOverUI;
     [SerializeField] private PauseMenuUI pauseMenuUI;
 
+    [Header("簡易關卡")]
+    [Tooltip("勾選後本關不套用生命值機制：怪物漏接不扣命，也不會因此結束")]
+    [SerializeField] private bool invincible;
+
     [Header("Ready / Countdown 節奏")]
     [SerializeField] private float readyDuration = 1.2f;
     [SerializeField] private float countdownStepDuration = 0.8f;
@@ -212,7 +216,7 @@ public class RoundManager : MonoBehaviour
     // 怪物漏接（走到 kill zone 還沒被消滅）呼叫這個扣一條命；歸零就提前結束、視為挑戰失敗。
     public void LoseLife()
     {
-        if (State != GameState.Playing) return;
+        if (State != GameState.Playing || invincible) return;
 
         CurrentLives = Mathf.Max(0, CurrentLives - 1);
         UpdateUI();
@@ -227,6 +231,6 @@ public class RoundManager : MonoBehaviour
     {
         if (scoreText != null) scoreText.text = $"分數 Score: {Score}";
         if (timerText != null) timerText.text = $"時間 Time: {Mathf.CeilToInt(roundDuration - elapsed)}";
-        if (livesText != null) livesText.text = $"生命 Lives: {CurrentLives}";
+        if (livesText != null) livesText.text = invincible ? "生命 Lives: ∞" : $"生命 Lives: {CurrentLives}";
     }
 }

@@ -9,6 +9,8 @@ public class MonsterSpawner : MonoBehaviour
     [Header("怪物種類")]
     [Tooltip("勾選後只會生成黑色怪物（簡易關卡用）")]
     [SerializeField] private bool blackOnly;
+    [Tooltip("勾選後怪物入場後只左右移動一次，之後只往前走（簡易關卡用）")]
+    [SerializeField] private bool sideStepOnce;
 
     [Header("出生點")]
     [Tooltip("左右出生點的 |X|，要在畫面外")]
@@ -85,6 +87,7 @@ public class MonsterSpawner : MonoBehaviour
         Monster monster = go.GetComponent<Monster>();
         float speedMultiplier = RoundManager.Instance.MonsterMoveIntervalMultiplier;
         monster.MoveIntervalMultiplier = speedMultiplier;
+        monster.SideStepOnce = sideStepOnce;
         monster.SetEntry(entryTarget, entryDuration * speedMultiplier);
     }
 }

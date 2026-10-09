@@ -1270,6 +1270,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
   blackMonsterPrefab: {fileID: 5437088454284537945, guid: 5158ad497a35541f283b76bad7d817f4, type: 3}
   blackOnly: 1
+  sideStepOnce: 1
   blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
   whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
   sideSpawnX: 23
@@ -1417,6 +1418,7 @@ MonoBehaviour:
   livesText: {fileID: 86109878}
   statusText: {fileID: 1569801407}
   gameOverUI: {fileID: 795259922}
+  invincible: 1
   readyDuration: 1.2
   countdownStepDuration: 0.8
 --- !u!4 &1133419284
