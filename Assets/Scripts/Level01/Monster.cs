@@ -9,6 +9,9 @@ public class Monster : MonoBehaviour
     // 由 MonsterSpawner 依目前難度設定；1 = 基準速度，小於 1 代表移動更快
     public float MoveIntervalMultiplier = 1f;
 
+    // 由 MonsterSpawner 設定；true = 入場後只左右移動一次，之後只往前走（簡易關卡用）
+    public bool SideStepOnce;
+
     [SerializeField] private float moveInterval = 1f; // 每秒 1 動：每次移動（左右或前進）都花這麼久
     [SerializeField] private float forwardStep = 3f;
     [SerializeField] private float killZoneZ = 1.5f;
@@ -56,9 +59,14 @@ public class Monster : MonoBehaviour
 
         currentLane = NearestLane(transform.position.x);
 
+        if (SideStepOnce && transform.position.z > killZoneZ)
+        {
+            yield return StartCoroutine(ShuffleOnce());
+        }
+
         while (transform.position.z > killZoneZ)
         {
-            for (int i = 0; i < 4 && transform.position.z > killZoneZ; i++)
+            for (int i = 0; !SideStepOnce && i < 4 && transform.position.z > killZoneZ; i++)
             {
                 yield return StartCoroutine(ShuffleOnce());
             }
