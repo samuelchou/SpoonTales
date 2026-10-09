@@ -19,11 +19,15 @@ MonoBehaviour:
     cooldownOverride: 0
     volumeScale: 0.5
   - id: shoot_ball
-    clip: {fileID: 8300000, guid: d7403f478ce251340a0cf60bf2fb01ed, type: 3}
+    clip: {fileID: 8300000, guid: 1c6ea7b83382e9843a41f4e94aee125f, type: 3}
     cooldownOverride: 0
     volumeScale: 0.5
   - id: goose_spawn
-    clip: {fileID: 8300000, guid: 1c6ea7b83382e9843a41f4e94aee125f, type: 3}
+    clip: {fileID: 8300000, guid: d7403f478ce251340a0cf60bf2fb01ed, type: 3}
+    cooldownOverride: 0
+    volumeScale: 0.8
+  - id: self_damage
+    clip: {fileID: 0}
     cooldownOverride: 0
     volumeScale: 0.8
   bgmList:
