@@ -39,8 +39,6 @@ public class LaneShooter : MonoBehaviour
     [SerializeField]
     private bool _isEnableSerial = false;
     [SerializeField]
-    private string _port = "COM3";
-    [SerializeField]
     private int _baudRate = 9600;
     [SerializeField]
     private int _thMm = 50;
@@ -50,7 +48,7 @@ public class LaneShooter : MonoBehaviour
     {
         if (_isEnableSerial)
         {
-            SerialConnector.Instance.Connect(_port, _baudRate);
+            SerialConnector.Instance.AutoConnectArduinoNano(_baudRate);
             _toggleSerials.Clear();
             foreach(var _ in mappings)
             {

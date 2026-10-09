@@ -6,8 +6,6 @@ namespace SerialSystem
     public class SerialTester : MonoBehaviour
     {
         [SerializeField]
-        private string _portName = "COM1";
-        [SerializeField]
         private int _baudRate = 9600;
         [SerializeField]
         private RectTransform _root;
@@ -17,7 +15,8 @@ namespace SerialSystem
 
         private void Start()
         {
-            SerialConnector.Instance.Connect(_portName, _baudRate);
+            SerialConnector.Instance.LogAvailablePorts();
+            SerialConnector.Instance.AutoConnectArduinoNano(_baudRate);
         }
 
         private void Update()
@@ -29,10 +28,10 @@ namespace SerialSystem
 
             if (SerialConnector.Instance.TryGetData(out var datas))
             {
-                if (datas.Count > _nowDisplays.Count)
+                while (datas.Count > _nowDisplays.Count)
                 {
                     var newDisplayer = GameObject.Instantiate(_displayerPrefab, _root);
-                    newDisplayer.name = $"Sensor {datas.Count + 1}";
+                    newDisplayer.NameText.text = $"Sensor {_nowDisplays.Count}";
                     _nowDisplays.Add(newDisplayer);
                 }
                 for (int i = 0; i < datas.Count; i++)
