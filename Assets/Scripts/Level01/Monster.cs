@@ -12,6 +12,16 @@ public class Monster : MonoBehaviour
     // 由 MonsterSpawner 設定；true = 入場後只左右移動一次，之後只往前走（簡易關卡用）
     public bool SideStepOnce;
 
+    [Header("Sfx")]
+    public string spawnSfxName = "goose_spawn";
+    public string hitSfxName = "hit_monster";
+
+    [Header("朝向")]
+    [Tooltip("圖片素材本身是否朝右；素材朝左就取消勾選")]
+    [SerializeField] private bool artFacesRight = true;
+    [Tooltip("要翻轉的 SpriteRenderer；留空會自動在自己或子物件中尋找")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+
     [SerializeField] private float moveInterval = 1f; // 每秒 1 動：每次移動（左右或前進）都花這麼久
     [SerializeField] private float forwardStep = 3f;
     [SerializeField] private float killZoneZ = 1.5f;
@@ -32,6 +42,14 @@ public class Monster : MonoBehaviour
         entryDuration = duration;
     }
 
+    private void Awake()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+    }
+
     private void Start()
     {
         StartCoroutine(MoveRoutine());
@@ -40,6 +58,7 @@ public class Monster : MonoBehaviour
     private IEnumerator EntryRoutine()
     {
         Vector3 start = transform.position;
+        FaceDirection(entryTarget.x - start.x);
         float t = 0f;
         while (t < entryDuration)
         {
@@ -58,6 +77,7 @@ public class Monster : MonoBehaviour
         }
 
         currentLane = NearestLane(transform.position.x);
+        AudioManager.Instance?.PlaySfx(spawnSfxName);
 
         if (SideStepOnce && transform.position.z > killZoneZ)
         {
@@ -115,6 +135,7 @@ public class Monster : MonoBehaviour
         currentLane = PickAdjacentLane(currentLane, Lanes.X.Length);
         Vector3 start = transform.position;
         Vector3 target = new Vector3(Lanes.X[currentLane], start.y, start.z);
+        FaceDirection(target.x - start.x);
 
         float duration = moveInterval * MoveIntervalMultiplier;
         float t = 0f;
@@ -156,9 +177,32 @@ public class Monster : MonoBehaviour
             RoundManager.Instance.AddScore(scoreValue);
         }
 
-        AudioManager.Instance?.PlaySfx("hit_monster");
+        AudioManager.Instance?.PlaySfx(hitSfxName);
         Destroy(ball.gameObject);
         StopAllCoroutines();
         Destroy(gameObject);
+    }
+
+    private void FaceDirection(float dx)
+    {
+        if (Mathf.Abs(dx) < 0.01f)
+        {
+            return;
+        }
+
+        bool movingRight = dx > 0f;
+        bool needFlip = movingRight != artFacesRight;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = needFlip;
+        }
+        else
+        {
+            // 沒有 SpriteRenderer（例如用 Quad + 材質）時，改用翻轉 X 縮放
+            Vector3 s = transform.localScale;
+            s.x = Mathf.Abs(s.x) * (needFlip ? -1f : 1f);
+            transform.localScale = s;
+        }
     }
 }

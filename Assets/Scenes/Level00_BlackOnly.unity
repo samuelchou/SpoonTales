@@ -321,10 +321,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LaneShooter
   _spawnZ: 1
+  _offscreenMargin: 0.15
   _ballScale: 0.35
   _isEnableKb: 1
   _isEnableSerial: 0
-  _port: COM3
   _baudRate: 9600
   _thMm: 50
 --- !u!114 &398439767
@@ -1268,11 +1268,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab896ba2936514db383cfb616d586e0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
-  blackMonsterPrefab: {fileID: 5437088454284537945, guid: 5158ad497a35541f283b76bad7d817f4, type: 3}
-  blackOnly: 1
-  sideStepOnce: 1
+  blackMonsterPrefab: {fileID: 5437088454284537945, guid: a9f0e54b25f6c5847ab7f0c9928725ba, type: 3}
   blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
   whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
+  blackOnly: 1
+  sideStepOnce: 1
   sideSpawnX: 23
   sideSpawnZ: 14
   farSpawnZ: 30
@@ -1418,6 +1418,7 @@ MonoBehaviour:
   livesText: {fileID: 86109878}
   statusText: {fileID: 1569801407}
   gameOverUI: {fileID: 795259922}
+  pauseMenuUI: {fileID: 0}
   invincible: 1
   readyDuration: 1.2
   countdownStepDuration: 0.8
