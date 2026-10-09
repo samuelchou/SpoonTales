@@ -6,6 +6,10 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject blueMonsterPrefab;
     [SerializeField] private GameObject whiteMonsterPrefab;
 
+    [Header("怪物種類")]
+    [Tooltip("勾選後只會生成黑色怪物（簡易關卡用）")]
+    [SerializeField] private bool blackOnly;
+
     [Header("出生點")]
     [Tooltip("左右出生點的 |X|，要在畫面外")]
     [SerializeField] private float sideSpawnX = 23f;
@@ -65,7 +69,7 @@ public class MonsterSpawner : MonoBehaviour
         }
         Vector3 entryTarget = new Vector3(Lanes.X[entryLane], Lanes.Y, sideSpawnZ);
 
-        SpoonColor kind = (SpoonColor)Random.Range(0, 3);
+        SpoonColor kind = blackOnly ? SpoonColor.Black : (SpoonColor)Random.Range(0, 3);
         GameObject prefab = kind switch
         {
             SpoonColor.Black => blackMonsterPrefab,
