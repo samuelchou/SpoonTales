@@ -22,12 +22,18 @@ public class MainMenuUI : MonoBehaviour
 
         if (selectedLevelText != null)
         {
-            selectedLevelText.text = "關卡\n" + (level != null ? level.levelName : "-");
+            selectedLevelText.text = TagText("關卡", level != null ? level.levelName : "-");
         }
         if (selectedDifficultyText != null)
         {
-            selectedDifficultyText.text = "難度\n" + (diff != null ? diff.difficultyId.ToUpperInvariant() : "-");
+            selectedDifficultyText.text = TagText("難度", diff != null ? diff.difficultyId : "-");
         }
+    }
+
+    // 吊牌文字：上方小標題（金色 16px），下方數值（20px，顏色用 Text 本身的顏色）
+    private static string TagText(string label, string value)
+    {
+        return "<size=16><color=#E3B548>" + label + "</color></size>\n<size=20>" + value.ToUpperInvariant() + "</size>";
     }
 
     public void ShowMainMenu()
