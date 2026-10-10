@@ -3106,6 +3106,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GooseParade
   targetCamera: {fileID: 228518577}
   walkController: {fileID: 9100000, guid: 1d9fd13b181a23d4c97e37da002b8627, type: 2}
+  dieController: {fileID: 9100000, guid: d81736ea04d1bd548aabc53d058e69bb, type: 2}
   spriteMaterial: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   gooseCount: 100
   depth: 4
@@ -3113,6 +3114,56 @@ MonoBehaviour:
   speedRange: {x: 0.03, y: 0.3}
   scaleRange: {x: 0.18, y: 0.28}
   artFacesRight: 1
+  dieSfxName: goose_spawn
+--- !u!1 &1849302300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1849302301}
+  - component: {fileID: 1849302302}
+  m_Layer: 0
+  m_Name: SpoonCursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1849302301
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849302300}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1849302302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849302300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5170498d347641bbba8cb081f95f11ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpoonCursor
+  fallController: {fileID: 9100000, guid: 720711226ec5c814ab1475d2eb8926d3, type: 2}
+  gooseParade: {fileID: 1849302202}
+  size: {x: 48, y: 96}
+  impactPoint: 0.5
+  sortingOrder: 1000
 --- !u!1 &1922584926
 GameObject:
   m_ObjectHideFlags: 0
@@ -3950,3 +4001,4 @@ SceneRoots:
   - {fileID: 1790805193275984596}
   - {fileID: 1849302157}
   - {fileID: 1849302201}
+  - {fileID: 1849302301}
