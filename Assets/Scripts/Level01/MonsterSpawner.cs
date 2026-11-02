@@ -5,6 +5,8 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private GameObject blackMonsterPrefab;
     [SerializeField] private GameObject blueMonsterPrefab;
     [SerializeField] private GameObject whiteMonsterPrefab;
+    [Tooltip("黑色怪物的其他外觀；生成黑色怪物時會從 blackMonsterPrefab 與這些之中隨機挑一個")]
+    [SerializeField] private GameObject[] extraBlackMonsterPrefabs;
 
     [Header("怪物種類")]
     [Tooltip("勾選後只會生成黑色怪物（簡易關卡用）")]
@@ -74,7 +76,7 @@ public class MonsterSpawner : MonoBehaviour
         SpoonColor kind = blackOnly ? SpoonColor.Black : (SpoonColor)Random.Range(0, 3);
         GameObject prefab = kind switch
         {
-            SpoonColor.Black => blackMonsterPrefab,
+            SpoonColor.Black => PickBlackPrefab(),
             SpoonColor.Blue => blueMonsterPrefab,
             _ => whiteMonsterPrefab
         };
@@ -89,5 +91,12 @@ public class MonsterSpawner : MonoBehaviour
         monster.MoveIntervalMultiplier = speedMultiplier;
         monster.SideStepOnce = sideStepOnce;
         monster.SetEntry(entryTarget, entryDuration * speedMultiplier);
+    }
+
+    private GameObject PickBlackPrefab()
+    {
+        int count = extraBlackMonsterPrefabs == null ? 0 : extraBlackMonsterPrefabs.Length;
+        int i = Random.Range(0, count + 1);
+        return i == 0 ? blackMonsterPrefab : extraBlackMonsterPrefabs[i - 1];
     }
 }

@@ -1271,6 +1271,10 @@ MonoBehaviour:
   blackMonsterPrefab: {fileID: 5437088454284537945, guid: a9f0e54b25f6c5847ab7f0c9928725ba, type: 3}
   blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
   whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
+  extraBlackMonsterPrefabs:
+  - {fileID: 3959927776997657066, guid: 174acc0c1ba64efe847a6a46c3aa85a6, type: 3}
+  - {fileID: 8619865566784560667, guid: d71f2227bbe640d18b55e581231b8f6c, type: 3}
+  - {fileID: 8166128309579880165, guid: 61365f86c95343a380f30db27c13ecb2, type: 3}
   blackOnly: 1
   sideStepOnce: 1
   sideSpawnX: 23
