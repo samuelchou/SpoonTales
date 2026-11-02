@@ -322,6 +322,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LaneShooter
   _spawnZ: 1
   _ballScale: 0.35
+  _spoonFallController: {fileID: 9100000, guid: 720711226ec5c814ab1475d2eb8926d3, type: 2}
+  _spoonFallViewportY: 0.12
+  _spoonFallScale: 1
   _isEnableKb: 1
   _isEnableSerial: 0
   _port: COM3

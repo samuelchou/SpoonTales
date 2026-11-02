@@ -32,6 +32,15 @@ public class LaneShooter : MonoBehaviour
     private float _offscreenMargin = 0.15f;
     [SerializeField]
     private float _ballScale = 0.35f;
+    [Header("Spoon Fall")]
+    [Tooltip("發射黑球時，在發射位置播放這個湯匙倒下動畫；留空則不播放")]
+    [SerializeField]
+    private RuntimeAnimatorController _spoonFallController;
+    [Tooltip("湯匙出現在畫面上的高度（viewport 單位，0 = 螢幕下緣）；球是從畫面外發射，所以放在下緣內側才看得到")]
+    [SerializeField]
+    private float _spoonFallViewportY = 0.12f;
+    [SerializeField]
+    private float _spoonFallScale = 1f;
     [Header("Keyboard")]
     [SerializeField]
     private bool _isEnableKb = true;
@@ -119,10 +128,15 @@ public class LaneShooter : MonoBehaviour
     // 球從那裡生成就一定在畫面外，再直線飛進畫面。
     private float ComputeOffscreenSpawnZ()
     {
+        return ComputeZAtViewportY(-_offscreenMargin);
+    }
+
+    private float ComputeZAtViewportY(float viewportY)
+    {
         Camera cam = Camera.main;
         if (cam == null) return _spawnZ;
 
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, -_offscreenMargin, 0f));
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, viewportY, 0f));
         if (Mathf.Abs(ray.direction.y) < 1e-4f) return _spawnZ;
 
         float t = (Lanes.Y - ray.origin.y) / ray.direction.y;
@@ -150,6 +164,33 @@ public class LaneShooter : MonoBehaviour
         ball.Kind = color;
 
         AudioManager.Instance?.PlaySfx("shoot_ball");
+
+        if (color == SpoonColor.Black)
+        {
+            PlaySpoonFall(laneIndex);
+        }
+    }
+
+    // 在發射的賽道上、畫面下緣內側播放一次 spoon-fall，播完就銷毀
+    private void PlaySpoonFall(int laneIndex)
+    {
+        if (_spoonFallController == null) return;
+
+        Vector3 pos = new Vector3(Lanes.X[laneIndex], Lanes.Y, ComputeZAtViewportY(_spoonFallViewportY));
+        GameObject go = new GameObject("SpoonFall");
+        go.transform.SetPositionAndRotation(pos, Quaternion.identity);
+        go.transform.localScale = Vector3.one * _spoonFallScale;
+        go.AddComponent<SpriteRenderer>();
+        Animator animator = go.AddComponent<Animator>();
+        animator.runtimeAnimatorController = _spoonFallController;
+
+        float length = 0f;
+        foreach (AnimationClip clip in _spoonFallController.animationClips)
+        {
+            length = Mathf.Max(length, clip.length);
+        }
+        // clip 是 loop 的，提早一點點銷毀，避免最後一幀繞回直立的第一格
+        Destroy(go, Mathf.Max(0f, length - 0.01f));
     }
 
     private static Color ColorFor(SpoonColor c)
