@@ -32,6 +32,18 @@ public class LaneShooter : MonoBehaviour
     private float _offscreenMargin = 0.15f;
     [SerializeField]
     private float _ballScale = 0.35f;
+    [Header("Ball")]
+    [Tooltip("球的 prefab（需有 Collider，會自動補上 Rigidbody / Ball）；留空則用 Sphere 佔位，並依顏色上色")]
+    [SerializeField]
+    private GameObject _ballPrefab;
+    [Tooltip("球速（units/sec）")]
+    [SerializeField]
+    private float _ballSpeed = 10f;
+    [Tooltip("球的存活秒數；只是保險，要夠長讓球能飛到遠方的 KillZone（Z≈45）")]
+    [SerializeField]
+    private float _ballLifetime = 6f;
+    // 佔位球的共用材質（每種顏色一份），避免每顆球都複製一份 material
+    private readonly Dictionary<SpoonColor, Material> _ballMaterials = new Dictionary<SpoonColor, Material>();
     [Header("Spoon Fall")]
     [Tooltip("發射黑球時，在發射位置播放這個湯匙倒下動畫；留空則不播放")]
     [SerializeField]
@@ -110,6 +122,12 @@ public class LaneShooter : MonoBehaviour
 
     private void OnDestroy()
     {
+        foreach (Material mat in _ballMaterials.Values)
+        {
+            if (mat != null) Destroy(mat);
+        }
+        _ballMaterials.Clear();
+
         if (SerialConnector.Instance.IsConnected)
         {
             SerialConnector.Instance.Disconnect();
@@ -147,21 +165,34 @@ public class LaneShooter : MonoBehaviour
     {
         Vector3 pos = new Vector3(Lanes.X[laneIndex], Lanes.Y, ComputeOffscreenSpawnZ());
 
-        GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject go;
+        if (_ballPrefab != null)
+        {
+            go = Instantiate(_ballPrefab, pos, Quaternion.identity);
+        }
+        else
+        {
+            go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            go.transform.SetPositionAndRotation(pos, Quaternion.identity);
+            Renderer rend = go.GetComponent<Renderer>();
+            rend.sharedMaterial = GetBallMaterial(color, rend.sharedMaterial);
+        }
         go.name = "Ball_" + color;
-        go.transform.SetPositionAndRotation(pos, Quaternion.identity);
         go.transform.localScale = Vector3.one * _ballScale;
-        go.GetComponent<Renderer>().material.color = ColorFor(color);
 
         Collider col = go.GetComponent<Collider>();
-        col.isTrigger = true;
+        if (col != null) col.isTrigger = true;
 
-        Rigidbody rb = go.AddComponent<Rigidbody>();
+        Rigidbody rb = go.GetComponent<Rigidbody>();
+        if (rb == null) rb = go.AddComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
 
-        Ball ball = go.AddComponent<Ball>();
+        Ball ball = go.GetComponent<Ball>();
+        if (ball == null) ball = go.AddComponent<Ball>();
         ball.Kind = color;
+        ball.Speed = _ballSpeed;
+        ball.Lifetime = _ballLifetime;
 
         AudioManager.Instance?.PlaySfx("shoot_ball");
 
@@ -191,6 +222,16 @@ public class LaneShooter : MonoBehaviour
         }
         // clip 是 loop 的，提早一點點銷毀，避免最後一幀繞回直立的第一格
         Destroy(go, Mathf.Max(0f, length - 0.01f));
+    }
+
+    private Material GetBallMaterial(SpoonColor color, Material source)
+    {
+        if (!_ballMaterials.TryGetValue(color, out Material mat) || mat == null)
+        {
+            mat = new Material(source) { name = "BallMat_" + color, color = ColorFor(color) };
+            _ballMaterials[color] = mat;
+        }
+        return mat;
     }
 
     private static Color ColorFor(SpoonColor c)
