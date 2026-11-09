@@ -204,7 +204,21 @@ public class RoundManager : MonoBehaviour
     {
         State = GameState.GameOver;
         if (statusText != null) statusText.text = "";
-        if (gameOverUI != null) gameOverUI.Show(Score, challengeFailed);
+        bool isNewBest = HighScoreStore.Submit(HighScoreKey(), Score, out int best);
+        if (gameOverUI != null) gameOverUI.Show(Score, challengeFailed, best, isNewBest);
+    }
+
+    // 關卡 id 優先用 GameSessionManager 選擇的 LevelData；直接開 Scene 測試時用 Scene 名稱。
+    private static string HighScoreKey()
+    {
+        GameSessionManager session = GameSessionManager.Instance;
+        string levelId = session != null && session.SelectedLevel != null
+            ? session.SelectedLevel.levelId
+            : UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        string difficultyId = session != null && session.SelectedDifficulty != null
+            ? session.SelectedDifficulty.difficultyId
+            : null;
+        return HighScoreStore.MakeKey(levelId, difficultyId);
     }
 
     public void AddScore(int amount)
