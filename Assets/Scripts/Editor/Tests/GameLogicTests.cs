@@ -130,6 +130,29 @@ public class GameLogicTests
     }
 
     [Test]
+    public void StageEvent_NewEventDefaultsToSpawnMonsters()
+    {
+        // 既有 asset 裡沒有新欄位的事件，反序列化時要維持原本的生成行為
+        var e = new StageData.StageEvent();
+        Assert.AreEqual(StageEventType.SpawnMonsters, e.eventType);
+        Assert.AreEqual(WalkDirection.Random, e.walkDirection);
+        Assert.IsNull(e.amaPrefab);
+        Assert.AreEqual(1, e.amaCount, "AmaWalk 事件預設出場一位");
+        Assert.AreEqual(0f, e.amaWalkDuration, "0 = 使用 prefab 預設步行時間");
+    }
+
+    [Test]
+    public void StageEvent_AmaCount_SpreadsWalksOverInterval()
+    {
+        var e = new StageData.StageEvent { eventType = StageEventType.AmaWalk, startTime = 25f, endTime = 40f, amaCount = 2 };
+        Assert.AreEqual(0, e.SpawnsDueAt(24.9f, e.amaCount));
+        Assert.AreEqual(1, e.SpawnsDueAt(25f, e.amaCount));
+        Assert.AreEqual(1, e.SpawnsDueAt(32.4f, e.amaCount));
+        Assert.AreEqual(2, e.SpawnsDueAt(32.5f, e.amaCount));
+        Assert.AreEqual(2, e.SpawnsDueAt(60f, e.amaCount));
+    }
+
+    [Test]
     public void StageData_PickMonsterPrefab_EmptyListReturnsNull()
     {
         StageData stage = ScriptableObject.CreateInstance<StageData>();

@@ -41,3 +41,11 @@ MonoBehaviour:
     startTime: 50
     endTime: 60
     monsterCount: 50
+  - eventType: 1
+    startTime: 25
+    endTime: 40
+    monsterCount: 0
+    amaPrefab: {fileID: 4718203395612047431, guid: b2157c67f8214d9cbe8cd04bfd0d4a6c, type: 3}
+    amaCount: 2
+    amaWalkDuration: 0
+    walkDirection: 2

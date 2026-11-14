@@ -20,6 +20,14 @@ public class StageManager : MonoBehaviour
     [SerializeField] private float sideEntryDuration = 0.5f;
     [SerializeField] private float farEntryDuration = 0.8f;
 
+    [Header("阿嬤（AmaWalk 事件）")]
+    [Tooltip("左側門的位置；有指定 Transform 時優先使用 Transform 的位置")]
+    [SerializeField] private Transform amaLeftDoor;
+    [SerializeField] private Vector3 amaLeftDoorPosition = new Vector3(-7.9f, 3.5f, 3.6f);
+    [Tooltip("右側門的位置；有指定 Transform 時優先使用 Transform 的位置")]
+    [SerializeField] private Transform amaRightDoor;
+    [SerializeField] private Vector3 amaRightDoorPosition = new Vector3(7.9f, 3.5f, 3.6f);
+
     // 每個進程事件已經生成了幾隻（index 對應 stageData.progress）
     private int[] spawnedPerEvent;
 
@@ -58,8 +66,48 @@ public class StageManager : MonoBehaviour
                         SpawnOne();
                     }
                     break;
+
+                case StageEventType.AmaWalk:
+                    // amaCount 位阿嬤平均分散在區間內出門（與怪物生成同樣的時間分配方式）
+                    int amaDue = stageEvent.SpawnsDueAt(time, stageEvent.amaCount);
+                    while (spawnedPerEvent[i] < amaDue)
+                    {
+                        spawnedPerEvent[i]++;
+                        SpawnAma(stageEvent);
+                    }
+                    break;
             }
         }
+    }
+
+    private void SpawnAma(StageData.StageEvent stageEvent)
+    {
+        if (stageEvent.amaPrefab == null)
+        {
+            Debug.LogWarning($"{name}: AmaWalk 事件（{stageEvent.startTime}s）沒有指定 amaPrefab", this);
+            return;
+        }
+
+        Vector3 left = amaLeftDoor != null ? amaLeftDoor.position : amaLeftDoorPosition;
+        Vector3 right = amaRightDoor != null ? amaRightDoor.position : amaRightDoorPosition;
+        bool leftToRight = stageEvent.walkDirection switch
+        {
+            WalkDirection.LeftToRight => true,
+            WalkDirection.RightToLeft => false,
+            _ => Random.value < 0.5f
+        };
+        Vector3 from = leftToRight ? left : right;
+        Vector3 to = leftToRight ? right : left;
+
+        GameObject go = Object.Instantiate(stageEvent.amaPrefab, from, Quaternion.identity);
+        Ama ama = go.GetComponent<Ama>();
+        if (ama == null)
+        {
+            Debug.LogWarning($"{name}: amaPrefab 上沒有 Ama 元件", go);
+            Destroy(go);
+            return;
+        }
+        ama.Walk(from, to, stageEvent.amaWalkDuration);
     }
 
     private void SpawnOne()

@@ -1,12 +1,21 @@
 using System;
 using System.Collections.Generic;
+using TriInspector;
 using UnityEngine;
 
 // 關卡進程中可以安排的事件種類；之後要加新事件（例如 Boss、改變走位）就在這裡加一項，
 // 再到 StageManager 的 switch 裡處理。
 public enum StageEventType
 {
-    SpawnMonsters
+    SpawnMonsters,
+    AmaWalk
+}
+
+public enum WalkDirection
+{
+    LeftToRight,
+    RightToLeft,
+    Random
 }
 
 // 一個關卡（Stage）的設定，由場景中的 StageManager 引用：
@@ -34,9 +43,22 @@ public class StageData : ScriptableObject
         [Tooltip("事件結束時間（秒）；等於開始時間代表在開始那一刻一次做完")]
         [Min(0f)] public float endTime = 10f;
 
-        [Header("SpawnMonsters")]
+        [ShowIf(nameof(eventType), StageEventType.SpawnMonsters)]
         [Tooltip("這段時間內總共生成幾隻怪物（會再乘上難度的 spawnRateMultiplier 並四捨五入），平均分散在區間內")]
         [Min(0)] public int monsterCount = 10;
+
+        [ShowIf(nameof(eventType), StageEventType.AmaWalk)]
+        [Tooltip("阿嬤 prefab（掛有 Ama 元件），從一側的門走到另一側的門")]
+        public GameObject amaPrefab;
+        [ShowIf(nameof(eventType), StageEventType.AmaWalk)]
+        [Tooltip("這段時間內總共出場幾次阿嬤（不受難度影響），出場時間平均分散在區間內，第一位在 startTime 出門")]
+        [Min(0)] public int amaCount = 1;
+        [ShowIf(nameof(eventType), StageEventType.AmaWalk)]
+        [Tooltip("每位阿嬤從門走到對面的門花幾秒；0 = 使用 prefab 的預設步行時間")]
+        [Min(0f)] public float amaWalkDuration;
+        [ShowIf(nameof(eventType), StageEventType.AmaWalk)]
+        [Tooltip("從哪一側的門走到哪一側；Random = 每位各自隨機")]
+        public WalkDirection walkDirection = WalkDirection.Random;
 
         public float Duration => Mathf.Max(0f, endTime - startTime);
 
