@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.codewriter.triinspector": "https://github.com/codewriter-packages/Tri-Inspector.git",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.assistant": "2.17.0-pre.1",
     "com.unity.ai.inference": "2.6.1",

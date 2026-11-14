@@ -1,18 +1,11 @@
 using UnityEngine;
 
-public class MonsterSpawner : MonoBehaviour
+// 管理單一關卡（Stage）的進行：依 StageData 的關卡進程（progress）在各時間區間執行事件，
+// 例如在區間內平均生成指定數量的怪物（從 StageData 的怪物清單抽）。時間用 RoundManager.Elapsed。
+public class StageManager : MonoBehaviour
 {
-    [SerializeField] private GameObject blackMonsterPrefab;
-    [SerializeField] private GameObject blueMonsterPrefab;
-    [SerializeField] private GameObject whiteMonsterPrefab;
-    [Tooltip("黑色怪物的其他外觀；生成黑色怪物時會從 blackMonsterPrefab 與這些之中隨機挑一個")]
-    [SerializeField] private GameObject[] extraBlackMonsterPrefabs;
-
-    [Header("怪物種類")]
-    [Tooltip("勾選後只會生成黑色怪物（簡易關卡用）")]
-    [SerializeField] private bool blackOnly;
-    [Tooltip("勾選後怪物入場後只左右移動一次，之後只往前走（簡易關卡用）")]
-    [SerializeField] private bool sideStepOnce;
+    [Tooltip("本關的怪物生成設定（可能出現的怪物清單等）")]
+    [SerializeField] private StageData stageData;
 
     [Header("出生點")]
     [Tooltip("左右出生點的 |X|，要在畫面外")]
@@ -27,21 +20,45 @@ public class MonsterSpawner : MonoBehaviour
     [SerializeField] private float sideEntryDuration = 0.5f;
     [SerializeField] private float farEntryDuration = 0.8f;
 
-    private float timer;
+    // 每個進程事件已經生成了幾隻（index 對應 stageData.progress）
+    private int[] spawnedPerEvent;
+
+    private void Start()
+    {
+        int count = stageData != null ? stageData.progress.Count : 0;
+        spawnedPerEvent = new int[count];
+        if (stageData == null)
+        {
+            Debug.LogWarning($"{name}: 沒有指定 StageData，本關不會生成怪物", this);
+        }
+    }
 
     private void Update()
     {
-        if (RoundManager.Instance == null || !RoundManager.Instance.RoundActive)
+        if (stageData == null || RoundManager.Instance == null || !RoundManager.Instance.RoundActive)
         {
             return;
         }
 
-        timer += Time.deltaTime;
-        float interval = 1f / RoundManager.Instance.CurrentSpawnRate;
-        if (timer >= interval)
+        float time = RoundManager.Instance.Elapsed;
+        for (int i = 0; i < stageData.progress.Count && i < spawnedPerEvent.Length; i++)
         {
-            timer -= interval;
-            SpawnOne();
+            StageData.StageEvent stageEvent = stageData.progress[i];
+            if (stageEvent == null) continue;
+
+            switch (stageEvent.eventType)
+            {
+                case StageEventType.SpawnMonsters:
+                    int total = Mathf.RoundToInt(stageEvent.monsterCount * RoundManager.Instance.SpawnRateMultiplier);
+                    int due = stageEvent.SpawnsDueAt(time, total);
+                    // 卡頓時一幀可能補生成好幾隻，確保區間內的總數不變
+                    while (spawnedPerEvent[i] < due)
+                    {
+                        spawnedPerEvent[i]++;
+                        SpawnOne();
+                    }
+                    break;
+            }
         }
     }
 
@@ -73,30 +90,22 @@ public class MonsterSpawner : MonoBehaviour
         }
         Vector3 entryTarget = new Vector3(Lanes.X[entryLane], Lanes.Y, sideSpawnZ);
 
-        SpoonColor kind = blackOnly ? SpoonColor.Black : (SpoonColor)Random.Range(0, 3);
-        GameObject prefab = kind switch
+        GameObject prefab = stageData != null ? stageData.PickMonsterPrefab() : null;
+        if (prefab == null)
         {
-            SpoonColor.Black => PickBlackPrefab(),
-            SpoonColor.Blue => blueMonsterPrefab,
-            _ => whiteMonsterPrefab
-        };
+            Debug.LogWarning($"{name}: StageData 沒有可生成的怪物，略過這次生成", this);
+            return;
+        }
 
         // 顏色（Kind）與外觀已經烘進各自的 prefab 裡，這裡只需要生成、擺位置、套用目前難度速度倍率。
         GameObject go = Object.Instantiate(prefab, spawnPos, Quaternion.identity);
-        go.name = "Monster_" + kind;
         go.transform.localScale = Vector3.one * monsterScale;
 
         Monster monster = go.GetComponent<Monster>();
+        go.name = "Monster_" + monster.Kind;
         float speedMultiplier = RoundManager.Instance.MonsterMoveIntervalMultiplier;
         monster.MoveIntervalMultiplier = speedMultiplier;
-        monster.SideStepOnce = sideStepOnce;
+        monster.SideStepOnce = stageData.sideStepOnce;
         monster.SetEntry(entryTarget, entryDuration * speedMultiplier);
-    }
-
-    private GameObject PickBlackPrefab()
-    {
-        int count = extraBlackMonsterPrefabs == null ? 0 : extraBlackMonsterPrefabs.Length;
-        int i = Random.Range(0, count + 1);
-        return i == 0 ? blackMonsterPrefab : extraBlackMonsterPrefabs[i - 1];
     }
 }

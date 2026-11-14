@@ -20,8 +20,8 @@
 `DifficultyData` 有 4 個欄位，`RoundManager.Start()` 讀取 `GameSessionManager.Instance.SelectedDifficulty` 套用：
 
 - `roundDuration`：直接取代 60 秒基準。
-- `spawnRateMultiplier`：乘在原本的生成頻率曲線（1→5 隻/秒）上。
-- `monsterMoveIntervalMultiplier`：乘在 `Monster` 每次移動所需時間上，由 `MonsterSpawner` 在生成時指定給每隻怪物。
+- `spawnRateMultiplier`：乘在 `StageData` 關卡進程每段 `SpawnMonsters` 事件的 `monsterCount` 上（四捨五入）。
+- `monsterMoveIntervalMultiplier`：乘在 `Monster` 每次移動所需時間上，由 `StageManager` 在生成時指定給每隻怪物。
 - `scoreMultiplier`：乘在每次得分上。
 
 數值目前是：Easy（0.7 / 1.3 / 0.8）、Normal（1.0 / 1.0 / 1.0，等同原本基準）、Hard（1.4 / 0.75 / 1.2）。純粹是先抓一組「感覺合理」的初版數字，之後試玩再調整 `Assets/Data/Difficulties/*.asset` 裡的數值即可，不用改程式。

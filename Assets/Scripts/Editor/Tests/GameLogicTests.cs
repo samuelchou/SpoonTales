@@ -80,4 +80,60 @@ public class GameLogicTests
         Assert.AreNotEqual(HighScoreStore.MakeKey("Level00", "Easy"), HighScoreStore.MakeKey("Level01", "Easy"));
         Assert.AreEqual(HighScoreStore.MakeKey(null, null), HighScoreStore.MakeKey("", ""));
     }
+
+    [Test]
+    public void StageData_PickMonsterPrefab_FollowsWeights()
+    {
+        StageData stage = ScriptableObject.CreateInstance<StageData>();
+        GameObject a = new GameObject("A"), b = new GameObject("B"), skipped = new GameObject("Skipped");
+        try
+        {
+            stage.monsters.Add(new StageData.MonsterEntry { prefab = a, weight = 1f });
+            stage.monsters.Add(new StageData.MonsterEntry { prefab = skipped, weight = 0f });
+            stage.monsters.Add(new StageData.MonsterEntry { prefab = null, weight = 5f });
+            stage.monsters.Add(new StageData.MonsterEntry { prefab = b, weight = 3f });
+
+            Assert.AreSame(a, stage.PickMonsterPrefab(0f));
+            Assert.AreSame(a, stage.PickMonsterPrefab(0.24f));
+            Assert.AreSame(b, stage.PickMonsterPrefab(0.26f));
+            Assert.AreSame(b, stage.PickMonsterPrefab(1f)); // Random.value 可能回傳 1
+        }
+        finally
+        {
+            Object.DestroyImmediate(a);
+            Object.DestroyImmediate(b);
+            Object.DestroyImmediate(skipped);
+            Object.DestroyImmediate(stage);
+        }
+    }
+
+    [Test]
+    public void StageEvent_SpawnsDueAt_SpreadsEvenlyOverInterval()
+    {
+        var e = new StageData.StageEvent { startTime = 10f, endTime = 20f };
+
+        Assert.AreEqual(0, e.SpawnsDueAt(9.99f, 5), "開始前不生成");
+        Assert.AreEqual(1, e.SpawnsDueAt(10f, 5), "開始那一刻生成第一隻");
+        Assert.AreEqual(1, e.SpawnsDueAt(11.99f, 5));
+        Assert.AreEqual(2, e.SpawnsDueAt(12f, 5), "每 10/5 = 2 秒一隻");
+        Assert.AreEqual(5, e.SpawnsDueAt(18f, 5), "最後一隻在結束前");
+        Assert.AreEqual(5, e.SpawnsDueAt(100f, 5), "不會超過總數");
+        Assert.AreEqual(0, e.SpawnsDueAt(15f, 0));
+    }
+
+    [Test]
+    public void StageEvent_SpawnsDueAt_ZeroDurationSpawnsAllAtStart()
+    {
+        var e = new StageData.StageEvent { startTime = 5f, endTime = 5f };
+        Assert.AreEqual(0, e.SpawnsDueAt(4.9f, 3));
+        Assert.AreEqual(3, e.SpawnsDueAt(5f, 3));
+    }
+
+    [Test]
+    public void StageData_PickMonsterPrefab_EmptyListReturnsNull()
+    {
+        StageData stage = ScriptableObject.CreateInstance<StageData>();
+        Assert.IsNull(stage.PickMonsterPrefab(0.5f));
+        Object.DestroyImmediate(stage);
+    }
 }
