@@ -6,10 +6,10 @@ public class Monster : MonoBehaviour
 {
     public SpoonColor Kind;
 
-    // 由 MonsterSpawner 依目前難度設定；1 = 基準速度，小於 1 代表移動更快
+    // 由 StageManager 依目前難度設定；1 = 基準速度，小於 1 代表移動更快
     public float MoveIntervalMultiplier = 1f;
 
-    // 由 MonsterSpawner 設定；true = 入場後只左右移動一次，之後只往前走（簡易關卡用）
+    // 由 StageManager 依 StageData 設定；true = 入場後只左右移動一次，之後只往前走（簡易關卡用）
     public bool SideStepOnce;
 
     [Header("Sfx")]
@@ -37,7 +37,7 @@ public class Monster : MonoBehaviour
     private float entryDuration;
     private bool isDead;
 
-    // 由 MonsterSpawner 在生成後呼叫：怪物先直接移動到 target（入場位置，通常是某條賽道上），
+    // 由 StageManager 在生成後呼叫：怪物先直接移動到 target（入場位置，通常是某條賽道上），
     // 完成後才開始正常的「左右移動 4 次 → 前進 1 次」循環。
     // duration 是入場花費的秒數（已含難度速度倍率，由呼叫端算好）。
     public void SetEntry(Vector3 target, float duration)

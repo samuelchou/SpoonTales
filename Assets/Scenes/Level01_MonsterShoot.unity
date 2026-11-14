@@ -1253,7 +1253,7 @@ GameObject:
   - component: {fileID: 1068411601}
   - component: {fileID: 1068411600}
   m_Layer: 0
-  m_Name: MonsterSpawner
+  m_Name: StageManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1270,10 +1270,8 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab896ba2936514db383cfb616d586e0a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MonsterSpawner
-  blackMonsterPrefab: {fileID: 5437088454284537945, guid: 5158ad497a35541f283b76bad7d817f4, type: 3}
-  blueMonsterPrefab: {fileID: 6464497284259252652, guid: 28753a3e568e54205b4ea7b853ce5018, type: 3}
-  whiteMonsterPrefab: {fileID: 3956477953292762467, guid: 6c2a69010aff9472291780d7dcddffea, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  stageData: {fileID: 11400000, guid: 443e72a2833448c4826aa944f4620011, type: 2}
   sideSpawnX: 23
   sideSpawnZ: 14
   farSpawnZ: 30

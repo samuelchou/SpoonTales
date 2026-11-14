@@ -45,21 +45,10 @@ public class RoundManager : MonoBehaviour
     public int Score { get; private set; }
     public int CurrentLives { get; private set; }
     public float MonsterMoveIntervalMultiplier { get; private set; } = 1f;
-
-    // 0-20s: 1/s, 20-30s: 2/s, 30-40s: 3/s, 40-50s: 4/s, 50-60s: 5/s，再乘上難度倍率
-    public float CurrentSpawnRate
-    {
-        get
-        {
-            float baseRate;
-            if (elapsed < 20f) baseRate = 1f;
-            else if (elapsed < 30f) baseRate = 2f;
-            else if (elapsed < 40f) baseRate = 3f;
-            else if (elapsed < 50f) baseRate = 4f;
-            else baseRate = 5f;
-            return baseRate * spawnRateMultiplier;
-        }
-    }
+    // 生成數量的難度倍率；StageManager 乘在每段進程事件的 monsterCount 上
+    public float SpawnRateMultiplier => spawnRateMultiplier;
+    // GO! 之後經過的秒數（暫停時不會增加），StageManager 依此推進關卡進程
+    public float Elapsed => elapsed;
 
     private void Awake()
     {
