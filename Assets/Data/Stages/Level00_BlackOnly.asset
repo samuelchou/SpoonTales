@@ -12,26 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b62d696f734b4559b32caf10b9ad073a, type: 3}
   m_Name: Level00_BlackOnly
   m_EditorClassIdentifier: Assembly-CSharp::StageData
-  monsters: []
+  monsters:
+  - prefab: {fileID: 5437088454284537945, guid: a9f0e54b25f6c5847ab7f0c9928725ba, type: 3}
+    weight: 10
   sideStepOnce: 1
   progress:
   - eventType: 0
     startTime: 0
-    endTime: 20
-    monsterCount: 20
-  - eventType: 0
-    startTime: 20
-    endTime: 30
-    monsterCount: 20
-  - eventType: 0
-    startTime: 30
-    endTime: 40
-    monsterCount: 30
+    endTime: 10
+    monsterCount: 5
   - eventType: 0
     startTime: 40
     endTime: 50
     monsterCount: 40
-  - eventType: 0
-    startTime: 50
-    endTime: 60
-    monsterCount: 50
