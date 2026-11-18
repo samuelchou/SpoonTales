@@ -1,8 +1,8 @@
 const int sensorNum = 1;
 const int sensorPin = A0;
 const bool isDebug = false;
-// 30 times per seconds
-const int interval = 33;
+// 25 times per seconds
+const int interval = 40;
 
 // 定義查表點位
 // 數據點越多越精準，此處用 4 個點
@@ -12,7 +12,7 @@ const int adcTable[NUM_POINTS]  = {430, 215, 164, 123, 82};
 // 對應距離 (單位：mm，使用整數避免浮點數運算)
 const int distTable[NUM_POINTS]  = {20,  50, 70, 100, 150};
 
-byte disResults[sensorNum + 1];
+byte disResults[sensorNum + 2];
 
 // 分段線性內插函式
 int getDistanceMm(int rawAdc) {
@@ -62,16 +62,17 @@ void setup() {
   if (isDebug) {
     Serial.println("Setup");
   }
-  disResults[0] = sensorNum;
+  disResults[0] = 0xF0;
+  disResults[1] = sensorNum;
 }
 
 void loop() {
   for (int i = 0; i < sensorNum; i++) {
     int disMm = getDistanceMmByIdx(i);
-    disResults[i + 1] = disMm;
+    disResults[i + 2] = disMm;
   } 
   if (!isDebug) {
-    Serial.write(disResults, sensorNum + 1);
+    Serial.write(disResults, sensorNum + 2);
   }
   delay(interval);
 }

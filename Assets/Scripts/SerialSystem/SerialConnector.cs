@@ -164,6 +164,20 @@ namespace SerialSystem
                 {
                     if (_byteCount <= 0 || _readByteCount >= _byteCount)
                     {
+                        if (_serialPort.BytesToRead < 2)
+                        {
+                            return;
+                        }
+                        var firstByte = _serialPort.ReadByte();
+                        while(firstByte != 0xF0 && _serialPort.BytesToRead > 0)
+                        {
+                            firstByte = _serialPort.ReadByte();
+                        }
+                        if (firstByte != 0xF0)
+                        {
+                            // 未找到有效的資料起始位元組，忽略此次接收
+                            return;
+                        }
                         _byteCount = _serialPort.ReadByte();
                         _readByteCount = 0;
                     }
